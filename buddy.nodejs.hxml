@@ -1,0 +1,10 @@
+-cp test
+-cp src 
+-lib promhx
+-lib buddy
+-lib nodejs
+-D nodejs
+-js bin/buddy.nodejs.js
+-main BuddyMain
+-cmd echo "---------- Node.js ----------"
+-cmd node bin/buddy.nodejs.js
