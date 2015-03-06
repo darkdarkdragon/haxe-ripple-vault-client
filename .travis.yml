@@ -44,6 +44,9 @@ before_install:
 script:
   - haxe buddy.${TARGET}.hxml
 
+after_script:
+  - ls -l bin
+
 branches:
       only:
           - master
