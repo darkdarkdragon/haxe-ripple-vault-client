@@ -12,9 +12,8 @@ class ManualTest {
         '[accounts]\r\nraVUps4RghLYkVBcpMaRbVKRTTzhesPXd\r\n' +
         '[currencies]\r\nUSD\r\n';
 
-    public static function main() {
-        trace('start');
 
+    static function testRippleTxt() {
         var rt = RippleTxt.get(domain1);
         rt.then(function(txt: Dynamic) {
             trace('for $domain1 got ripple.txt:');
@@ -26,5 +25,23 @@ class ManualTest {
         var txt = RippleTxt.parse(rippleTxtRes);
 
         trace(txt.authinfo_url[0] == 'http://54.191.36.127:5993/v1/authinfo');
+    }
+
+    static function testAuthInfo() {
+        AuthInfo.get('ripple.com', 'debugtest08')
+        .then(function(ai) {
+            trace(ai);
+            var addressRight = ai.address == 'rNQnDtNbiPKoJg5956B6YfQomTX9DWRiUm';
+            trace('addressRight: $addressRight');
+        })
+        .catchError(function(e) {
+            trace(e);
+        });
+    }
+
+    public static function main() {
+        trace('start');
+//        testRippleTxt();
+        testAuthInfo();
     }
 }

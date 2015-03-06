@@ -4,6 +4,7 @@ import buddy.*;
 using buddy.Should;
 
 import ripple.vaultclient.RippleTxt;
+import ripple.vaultclient.AuthInfo;
 
 // "implements Buddy" is only required for the Main class.
 class BuddyMain extends BuddySuite implements Buddy {
@@ -56,6 +57,22 @@ class AsyncTest extends BuddySuite {
                 .catchError(fail);
             });
         });
+
+        describe("Test AuthInfo requests", {
+            it("should get info from https://id.ripple.com", function(done) {
+                AuthInfo.get('ripple.com', 'debugtest08')
+                .then(function(ai) {
+//                    trace(ai);
+                    var addressRight = ai.address == 'rNQnDtNbiPKoJg5956B6YfQomTX9DWRiUm';
+                    if (!addressRight) fail('wrong address');
+                    var exists = ai.exists;
+                    if (!exists) fail('shoud exists');
+                    done();
+                })
+                .catchError(fail);
+            });
+        });
+
     }
 }
 

@@ -2,7 +2,7 @@
 -lib nodejs
 -cp test
 -cp src
--js bin/buddytest.js
+-js bin/manualtest.js
 -dce full
 -D nodejs
--main BuddyMain.hx
+-main ManualTest
