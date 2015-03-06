@@ -1,0 +1,15 @@
+{
+  "name": "haxe-ripple-vault-client",
+  "url": "https://github.com/darkdarkdragon/haxe-ripple-vault-client",
+  "license": "MIT",
+  "classPath": "src",
+  "tags": ["ripple"],
+  "description": "Client for interacting with the ripple blobvault",
+  "releasenote": "initial release",
+  "version": "0.0.1",
+  "contributors": ["darkdarkdragon"],
+  "dependencies": {
+    "promhx": "",
+    "nodejs": ""
+  }
+}

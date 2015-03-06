@@ -1,0 +1,8 @@
+-cp test
+-cp src 
+-lib promhx
+-lib buddy
+-lib hxssl
+-main BuddyMain
+-cmd echo "---------- Neko -----------"
+-x bin/buddy

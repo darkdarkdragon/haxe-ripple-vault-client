@@ -1,0 +1,8 @@
+-lib promhx
+-lib nodejs
+-cp test
+-cp src
+-js bin/buddytest.js
+-dce full
+-D nodejs
+-main BuddyMain.hx

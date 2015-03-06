@@ -1,0 +1,10 @@
+-cp test
+-cp src 
+-lib promhx
+-lib buddy
+-lib hxssl
+-cpp bin
+-main BuddyMain
+-cmd echo "---------- CPP ----------"
+-cmd bin/BuddyMain
+-D HXCPP_M64

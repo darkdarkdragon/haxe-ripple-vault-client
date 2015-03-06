@@ -1,0 +1,8 @@
+-cp test
+-cp src 
+-lib promhx
+-lib buddy
+-cs bin
+-main BuddyMain
+-cmd echo "---------- C# ----------"
+-cmd mono bin/bin/BuddyMain.exe
