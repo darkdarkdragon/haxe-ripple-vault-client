@@ -60,8 +60,11 @@ class AuthInfo {
                         }
                         h.onError = function(e) {
                             if (debug) trace(e);
+                            trace('exception is:');
+                            trace(Type.typeof(e));
+                            trace(Type.getClassName(Type.getClass(e)));
                             var stre: String = cast e;
-                            if (stre != null && (stre.indexOf('TIMEDOUT') != -1 || stre.indexOf('RESET') != -1)) {
+                            if (stre != null && (stre.toLowerCase().indexOf('timedout') != -1 || stre.toLowerCase().indexOf('reset') != -1)) {
                                 times += 1;
                                 if (times < 4) {
                                     request();
