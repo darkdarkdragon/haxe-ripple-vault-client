@@ -37,6 +37,7 @@ class RippleTxt {
         var p1 = new Promise<Dynamic>(dp1);
 
         var redirectCount = 0;
+        var times = 0;
         var request = null;
         request = function(i: Int, ?forceUrl: String = null) {
             if (i >= urlTemplates.length) {
@@ -91,7 +92,23 @@ class RippleTxt {
             h.onError = function(e){
                 if (debug) trace('some error getting $url:');
                 if (debug) trace(e);
-                request(i + 1, null);
+                if (true) trace('some error getting $url:');
+                if (true) trace(e);
+                var stre: String = cast e;
+                if (stre != null && (stre.indexOf('TIMEDOUT') != -1 || stre.indexOf('RESET') != -1)) {
+                    times += 1;
+                    if (times < 4) {
+                        request(i, null);
+                    } else {
+                        times = 0;
+                        request(i + 1, null);
+                    }
+                } else {
+                    times = 0;
+                    request(i + 1, null);
+                }
+//                times = 0;
+//                request(i + 1, null);
 //                throw e;
             }
             h.request(false);

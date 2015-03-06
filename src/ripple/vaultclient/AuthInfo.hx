@@ -33,32 +33,48 @@ class AuthInfo {
                 if (authinfo_urls != null && authinfo_urls.length > 0) {
                     var url = authinfo_urls[0] + '?domain=' + domain + '&username=' + address;
                     if (debug) trace('trying $url');
-                    var h = new Http(url);
-                    var status = 0;
-                    h.onStatus = function(s) {
-                        status = s;
-                        if (debug) trace('status $s');
-                        if ( s < 200 || s >= 400 ) {
-                            // error happens
-                            h.onData = function(d) { };
-                        }
 
-                    }
-                    h.onData = function(data) {
-                        if (debug) trace(data);
-                        try {
-                            var parsed = Json.parse(data);
-                            if (debug) trace(parsed);
-                            d.resolve(parsed);
-                        } catch (e: Dynamic) {
-                            d.throwError(e);
+                    var times = 0;
+                    var request = null;
+
+                    request = function() {
+                        var h = new Http(url);
+                        var status = 0;
+                        h.onStatus = function(s) {
+                            status = s;
+                            if (debug) trace('status $s');
+                            if ( s < 200 || s >= 400 ) {
+                                // error happens
+                                h.onData = function(d) { };
+                            }
                         }
+                        h.onData = function(data) {
+                            if (debug) trace(data);
+                            try {
+                                var parsed = Json.parse(data);
+                                if (debug) trace(parsed);
+                                d.resolve(parsed);
+                            } catch (e: Dynamic) {
+                                d.throwError(e);
+                            }
+                        }
+                        h.onError = function(e) {
+                            if (debug) trace(e);
+                            var stre: String = cast e;
+                            if (stre != null && (stre.indexOf('TIMEDOUT') != -1 || stre.indexOf('RESET') != -1)) {
+                                times += 1;
+                                if (times < 4) {
+                                    request();
+                                } else {
+                                    d.throwError(e);
+                                }
+                            } else {
+                                d.throwError(e);
+                            }
+                        }
+                        h.request(false);
                     }
-                    h.onError = function(e) {
-                        if (debug) trace(e);
-                        d.throwError(e);
-                    }
-                    h.request(false);
+                    request();
                 } else {
                     d.throwError('authinfo_url is empty in ripple.txt');
                 }
