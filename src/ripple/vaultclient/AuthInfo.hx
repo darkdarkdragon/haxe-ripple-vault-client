@@ -2,8 +2,10 @@ package ripple.vaultclient;
 
 import haxe.Http;
 import haxe.Json;
-import promhx.Deferred;
-import promhx.Promise;
+//import promhx.Deferred;
+//import promhx.Promise;
+import thx.promise.Promise;
+import thx.core.Error;
 
 /**
  * ...
@@ -20,75 +22,80 @@ class AuthInfo {
      * @param address - Username or ripple address who's info we are retreiving
      */
     public static function get(domain: String, address: String): Promise<AuthInfoType> {
-        var d = new Deferred<AuthInfoType>();
-        var p = new Promise<AuthInfoType>(d);
-        RippleTxt.get(domain)
-        .then(function(txt) {
+//        var d = new Deferred<AuthInfoType>();
+//        var p = new Promise<AuthInfoType>(d);
+        return RippleTxt.get(domain)
+        .mapSuccessPromise(function(txt) {
 //            if (debug) trace('got:');
 //            if (debug) trace(txt);
-            if (debug) trace(Reflect.hasField(txt, 'authinfo_url'));
-//            if (Reflect.hasField(txt, 'authinfo_url') && Std.is(Reflect.hasField(txt, 'authinfo_url'), Array)) {
-            if (Reflect.hasField(txt, 'authinfo_url')) {
-                var authinfo_urls: Array<String> = cast Reflect.field(txt, 'authinfo_url');
-                if (authinfo_urls != null && authinfo_urls.length > 0) {
-                    var url = authinfo_urls[0] + '?domain=' + domain + '&username=' + address;
-                    if (debug) trace('trying $url');
+            return Promise.create(function(resolve : AuthInfoType -> Void, reject : Error -> Void) {
+                if (debug) trace(Reflect.hasField(txt, 'authinfo_url'));
+    //            if (Reflect.hasField(txt, 'authinfo_url') && Std.is(Reflect.hasField(txt, 'authinfo_url'), Array)) {
+                if (Reflect.hasField(txt, 'authinfo_url')) {
+                    var authinfo_urls: Array<String> = cast Reflect.field(txt, 'authinfo_url');
+                    if (authinfo_urls != null && authinfo_urls.length > 0) {
+                        var url = authinfo_urls[0] + '?domain=' + domain + '&username=' + address;
+                        if (debug) trace('trying $url');
 
-                    var times = 0;
-                    var request = null;
+                        var times = 0;
+                        var request = null;
 
-                    request = function() {
-                        var h = new Http(url);
-                        var status = 0;
-                        h.onStatus = function(s) {
-                            status = s;
-                            if (debug) trace('status $s');
-                            if ( s < 200 || s >= 400 ) {
-                                // error happens
-                                h.onData = function(d) { };
-                            }
-                        }
-                        h.onData = function(data) {
-                            if (debug) trace(data);
-                            try {
-                                var parsed = Json.parse(data);
-                                if (debug) trace(parsed);
-                                d.resolve(parsed);
-                            } catch (e: Dynamic) {
-                                d.throwError(e);
-                            }
-                        }
-                        h.onError = function(e) {
-                            if (debug) trace(e);
-                            trace('exception is:');
-                            trace(Type.typeof(e));
-                            trace(Type.getClassName(Type.getClass(e)));
-                            var stre: String = cast e;
-                            if (stre != null && (stre.toLowerCase().indexOf('timedout') != -1 || stre.toLowerCase().indexOf('reset') != -1)) {
-                                times += 1;
-                                if (times < 4) {
-                                    request();
-                                } else {
-                                    d.throwError(e);
+                        request = function() {
+                            var h = new Http(url);
+                            var status = 0;
+                            h.onStatus = function(s) {
+                                status = s;
+                                if (debug) trace('status $s');
+                                if ( s < 200 || s >= 400 ) {
+                                    // error happens
+                                    h.onData = function(d) { };
                                 }
-                            } else {
-                                d.throwError(e);
                             }
+                            h.onData = function(data) {
+                                if (debug) trace(data);
+                                try {
+                                    var parsed = Json.parse(data);
+                                    if (debug) trace(parsed);
+//                                    d.resolve(parsed);
+                                    resolve(parsed);
+                                } catch (e: Dynamic) {
+//                                    d.throwError(e);
+                                    reject(new Error(e));
+                                }
+                            }
+                            h.onError = function(e) {
+                                if (debug) trace(e);
+                                var stre: String = cast e;
+                                if (stre != null && (stre.toLowerCase().indexOf('timedout') != -1 || stre.toLowerCase().indexOf('reset') != -1)) {
+                                    times += 1;
+                                    if (times < 4) {
+                                        request();
+                                    } else {
+//                                        d.throwError(e);
+                                        reject(new Error(e));
+                                    }
+                                } else {
+//                                    d.throwError(e);
+                                    reject(new Error(e));
+                                }
+                            }
+                            h.request(false);
                         }
-                        h.request(false);
+                        request();
+                    } else {
+                        //d.throwError('authinfo_url is empty in ripple.txt');
+                        reject(new Error('authinfo_url is empty in ripple.txt'));
                     }
-                    request();
                 } else {
-                    d.throwError('authinfo_url is empty in ripple.txt');
+//                    d.throwError('no authinfo_url in ripple.txt');
+                    reject(new Error('no authinfo_url in ripple.txt'));
                 }
-            } else {
-                d.throwError('no authinfo_url in ripple.txt');
-            }
-        })
-        .catchError(function(e) {
-            d.throwError(e);
+            });
         });
-        return p;
+//        .catchError(function(e) {
+//            d.throwError(e);
+//        });
+//        return p;
     }
 
 }

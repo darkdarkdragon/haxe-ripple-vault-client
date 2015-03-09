@@ -9,7 +9,8 @@
   "version": "0.0.1",
   "contributors": ["darkdarkdragon"],
   "dependencies": {
-    "promhx": "",
+    "thx.core": "",
+    "thx.promise": "",
     "nodejs": ""
   }
 }

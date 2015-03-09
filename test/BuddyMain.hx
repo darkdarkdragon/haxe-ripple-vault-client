@@ -35,6 +35,24 @@ class BuddyMain extends BuddySuite implements Buddy {
 }
 
 class AsyncTest extends BuddySuite {
+
+    #if nodejs
+    static var name = 'debugtest08';
+    static var address = 'rNQnDtNbiPKoJg5956B6YfQomTX9DWRiUm';
+    #elseif neko
+    static var name = 'debugtest07';
+    static var address = 'rsSFa7N6UsRZJs2TGEtPYB3wQfFrCmaXrj';
+    #elseif java
+    static var name = 'debugtest05';
+    static var address = 'rDggEzL4DmV7T8sCho21esUu54h2MYKMWN';
+    #elseif cs
+    static var name = 'debugtest04';
+    static var address = 'r9RUfajXbdoPwRYMpMihGrf7FxkiMvY7km';
+    #else
+    static var name = 'debugtest02';
+    static var address = 'rJK7UCGQdSsbxseNbE8ptm5tegSkBovNcE';
+    #end
+
     public function new() {
         this.timeoutMs = 15000;
 

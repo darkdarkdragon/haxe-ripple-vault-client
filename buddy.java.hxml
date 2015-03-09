@@ -1,6 +1,7 @@
 -cp test
 -cp src 
--lib promhx
+-lib thx.core
+-lib thx.promise
 -lib buddy
 -java bin
 -main BuddyMain

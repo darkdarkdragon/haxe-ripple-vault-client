@@ -1,8 +1,10 @@
 package ripple.vaultclient;
 
 import haxe.Http;
-import promhx.Deferred;
-import promhx.Promise;
+//import promhx.Deferred;
+//import promhx.Promise;
+import thx.promise.Promise;
+import thx.core.Error;
 
 /**
  * ...
@@ -30,90 +32,95 @@ class RippleTxt {
      */
     public static function get(domain): Promise<Dynamic> {
         if (cache.exists(domain)) {
-            return Promise.promise(cache.get(domain));
+//            return Promise.promise(cache.get(domain));
+            return Promise.value(cache.get(domain));
         }
 
-        var dp1 = new Deferred<Dynamic>();
-        var p1 = new Promise<Dynamic>(dp1);
-
-        var redirectCount = 0;
-        var times = 0;
-        var request = null;
-        request = function(i: Int, ?forceUrl: String = null) {
-            if (i >= urlTemplates.length) {
-                dp1.throwError('ripple.txt not found');
-                return;
-            }
-            var url = urlTemplates[i];
-            url = StringTools.replace(url, '{{domain}}', domain);
-            if (forceUrl != null) {
-                url = forceUrl;
-            }
-            if (debug) trace('trying $url');
-            var h = new Http(url);
-            var status = 0;
-            h.onStatus = function(s) {
-                if (debug) trace('got status $s');
-                status = s;
-                if (s == 301) {
-                    var location = h.responseHeaders.get('location');
-                    if (debug) trace('--- got redirect to $location');
-                    h.onData = function(d) { };
-                    redirectCount += 1;
-                    if (redirectCount > 5) {
-                        dp1.throwError('ripple.txt not found');
-                        return;
-                    }
-                    request(i, location);
-                }
-//                if ( s < 200 || s >= 400 ) {
-//                    // error happens
-//                    h.onData = function(d) { };
-//                }
-            }
-            h.onData = function(d) {
-                if (debug) trace('on data status $status');
-                if (status != 0 && (status < 200 || status >= 400)) {
-                    // should not be here
+//        var dp1 = new Deferred<Dynamic>();
+//        var p1 = new Promise<Dynamic>(dp1);
+        var p1 = Promise.create(function(resolve : Dynamic -> Void, reject : Error -> Void) {
+            var redirectCount = 0;
+            var times = 0;
+            var request = null;
+            request = function(i: Int, ?forceUrl: String = null) {
+                if (i >= urlTemplates.length) {
+//                    dp1.throwError('ripple.txt not found');
+                    reject(new Error('ripple.txt not found'));
                     return;
                 }
-                if (d == null || d.length == 0) {
-                    if (debug) trace('some error getting $url');
-                    //dp1.throwError('Error in request');
-                    request(i + 1, null);
-                } else {
-                    if (debug) trace('got data:');
-                    if (debug) trace(d);
-                    var parsed = parse(d);
-                    cache.set(domain, parsed);
-                    dp1.resolve(parsed);
+                var url = urlTemplates[i];
+                url = StringTools.replace(url, '{{domain}}', domain);
+                if (forceUrl != null) {
+                    url = forceUrl;
                 }
-            }
-            h.onError = function(e){
-                if (debug) trace('some error getting $url:');
-                if (debug) trace(e);
-                if (true) trace('some error getting $url:');
-                if (true) trace(e);
-                var stre: String = cast e;
-                if (stre != null && (stre.indexOf('TIMEDOUT') != -1 || stre.indexOf('RESET') != -1)) {
-                    times += 1;
-                    if (times < 4) {
-                        request(i, null);
+                if (debug) trace('trying $url');
+                var h = new Http(url);
+                var status = 0;
+                h.onStatus = function(s) {
+                    if (debug) trace('got status $s');
+                    status = s;
+                    if (s == 301) {
+                        var location = h.responseHeaders.get('location');
+                        if (debug) trace('--- got redirect to $location');
+                        h.onData = function(d) { };
+                        redirectCount += 1;
+                        if (redirectCount > 5) {
+//                            dp1.throwError('ripple.txt not found');
+                            reject(new Error('ripple.txt not found'));
+                            return;
+                        }
+                        request(i, location);
+                    }
+    //                if ( s < 200 || s >= 400 ) {
+    //                    // error happens
+    //                    h.onData = function(d) { };
+    //                }
+                }
+                h.onData = function(d) {
+                    if (debug) trace('on data status $status');
+                    if (status != 0 && (status < 200 || status >= 400)) {
+                        // should not be here
+                        return;
+                    }
+                    if (d == null || d.length == 0) {
+                        if (debug) trace('some error getting $url');
+                        //dp1.throwError('Error in request');
+                        request(i + 1, null);
+                    } else {
+                        if (debug) trace('got data:');
+                        if (debug) trace(d);
+                        var parsed = parse(d);
+                        cache.set(domain, parsed);
+//                        dp1.resolve(parsed);
+                        resolve(parsed);
+                    }
+                }
+                h.onError = function(e){
+                    if (debug) trace('some error getting $url:');
+                    if (debug) trace(e);
+                    if (true) trace('some error getting $url:');
+                    if (true) trace(e);
+                    var stre: String = cast e;
+                    if (stre != null && (stre.indexOf('TIMEDOUT') != -1 || stre.indexOf('RESET') != -1)) {
+                        times += 1;
+                        if (times < 4) {
+                            request(i, null);
+                        } else {
+                            times = 0;
+                            request(i + 1, null);
+                        }
                     } else {
                         times = 0;
                         request(i + 1, null);
                     }
-                } else {
-                    times = 0;
-                    request(i + 1, null);
+    //                times = 0;
+    //                request(i + 1, null);
+    //                throw e;
                 }
-//                times = 0;
-//                request(i + 1, null);
-//                throw e;
+                h.request(false);
             }
-            h.request(false);
-        }
-        request(0, null);
+            request(0, null);
+        });
         return p1;
     }
 

@@ -15,7 +15,7 @@ class ManualTest {
 
     static function testRippleTxt() {
         var rt = RippleTxt.get(domain1);
-        rt.then(function(txt: Dynamic) {
+        rt.success(function(txt: Dynamic) {
             trace('for $domain1 got ripple.txt:');
             trace(txt);
             trace('txt.validation_public_key: ${txt.validation_public_key}');
@@ -29,19 +29,19 @@ class ManualTest {
 
     static function testAuthInfo() {
         AuthInfo.get('ripple.com', 'debugtest08')
-        .then(function(ai) {
+        .success(function(ai) {
             trace(ai);
             var addressRight = ai.address == 'rNQnDtNbiPKoJg5956B6YfQomTX9DWRiUm';
             trace('addressRight: $addressRight');
         })
-        .catchError(function(e) {
+        .failure(function(e) {
             trace(e);
         });
     }
 
     public static function main() {
         trace('start');
-//        testRippleTxt();
+        testRippleTxt();
         testAuthInfo();
     }
 }

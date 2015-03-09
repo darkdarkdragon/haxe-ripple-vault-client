@@ -1,4 +1,5 @@
--lib promhx
+-lib thx.core
+-lib thx.promise
 -lib nodejs
 -cp test
 -cp src
