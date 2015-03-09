@@ -177,9 +177,10 @@ class AsyncTest extends BuddySuite {
         describe('Ripple Txt', {
           it('should get the content of a ripple.txt file from a given domain', function(done) {
             RippleTxt.get(exampleData.domain).either(function(resp) {
-//              Assert.notNull(resp);
-              if (resp == null) fail('is null!');
-              trace(resp);
+              Assert.notNull(resp);
+//              Assert.isNull(resp);
+//              if (resp == null) fail('is null!');
+//              trace(resp);
               done();
             }, fail);
           });
@@ -198,19 +199,20 @@ class AsyncTest extends BuddySuite {
 //          });
         });
 
-//        describe('AuthInfo', function() {
-//          it('should get auth info', function(done) {
-//            AuthInfo.get(exampleData.domain, exampleData.username, function(err, resp) {
-//              assert.ifError(err);
+        describe('AuthInfo', function() {
+          it('should get auth info', function(done) {
+            AuthInfo.get(exampleData.domain, exampleData.username).either(function(resp) {
+//                trace(resp);
+                Lambda.iter(Reflect.fields(authInfoRes.body), function(prop) {
+                    Assert.isTrue(Reflect.hasField(resp, prop));
+                });
 //              Object.keys(authInfoRes.body).forEach(function(prop) {
 //                assert(resp.hasOwnProperty(prop));
 //              });
-//              done();
-//            });
-//          });
-//        });
-//
-
+              done();
+            }, fail);
+          });
+        });
     }
 }
 

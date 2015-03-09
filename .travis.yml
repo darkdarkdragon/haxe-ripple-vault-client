@@ -26,6 +26,7 @@ before_install:
   - haxelib install buddy
   - haxelib install hxssl
   - haxelib install nodejs
+  - haxelib install utest
 
 
   # apt packages for each target
