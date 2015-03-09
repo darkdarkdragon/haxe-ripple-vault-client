@@ -21,7 +21,8 @@ before_install:
   - sudo sh install-haxe.sh -y
 
   # haxelib dependencies for all targets
-  - haxelib install promhx
+  - haxelib install thx.core
+  - haxelib install thx.promise
   - haxelib install buddy
   - haxelib install hxssl
   - haxelib install nodejs
