@@ -60,7 +60,7 @@ class AsyncTest extends BuddySuite {
 
             it("should get ripple.txt from ripple.com", function(done) {
                 RippleTxt.get('ripple.com')
-                .then(function(txt: Dynamic) {
+                .either(function(txt: Dynamic) {
 //                    Reflect.hasField(txt, 'validators').should.be(true);
                     var hasValidators = Reflect.hasField(txt, 'validators');
                     if (!hasValidators) fail('Should contains validators');
@@ -71,23 +71,21 @@ class AsyncTest extends BuddySuite {
                     }
 
                     done();
-                })
-                .catchError(fail);
+                }, fail);
             });
         });
 
         describe("Test AuthInfo requests", {
             it("should get info from https://id.ripple.com", function(done) {
                 AuthInfo.get('ripple.com', 'debugtest08')
-                .then(function(ai) {
+                .either(function(ai) {
 //                    trace(ai);
                     var addressRight = ai.address == 'rNQnDtNbiPKoJg5956B6YfQomTX9DWRiUm';
                     if (!addressRight) fail('wrong address');
                     var exists = ai.exists;
                     if (!exists) fail('shoud exists');
                     done();
-                })
-                .catchError(fail);
+                }, fail);
             });
         });
 
