@@ -66,7 +66,7 @@ class AuthInfo {
                             h.onError = function(e) {
                                 if (debug) trace(e);
                                 var stre: String = cast e;
-                                if (stre != null && (stre.toLowerCase().indexOf('timedout') != -1 || stre.toLowerCase().indexOf('reset') != -1)) {
+                                if (stre != null && (stre.toLowerCase().indexOf('time') != -1 || stre.toLowerCase().indexOf('reset') != -1)) {
                                     times += 1;
                                     if (times < 4) {
                                         request();

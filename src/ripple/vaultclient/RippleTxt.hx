@@ -101,7 +101,7 @@ class RippleTxt {
                     if (true) trace('some error getting $url:');
                     if (true) trace(e);
                     var stre: String = cast e;
-                    if (stre != null && (stre.indexOf('TIMEDOUT') != -1 || stre.indexOf('RESET') != -1)) {
+                    if (stre != null && (stre.toLowerCase().indexOf('time') != -1 || stre.toLowerCase().indexOf('reset') != -1)) {
                         times += 1;
                         if (times < 4) {
                             request(i, null);
