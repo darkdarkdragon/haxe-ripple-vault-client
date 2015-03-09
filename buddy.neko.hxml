@@ -2,6 +2,7 @@
 -cp src 
 -lib thx.core
 -lib thx.promise
+-lib utest
 -lib buddy
 -lib hxssl
 -main BuddyMain
