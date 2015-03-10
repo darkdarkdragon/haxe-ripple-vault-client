@@ -7,8 +7,8 @@ language: node_js
 env:
     matrix:
     - TARGET=cpp
-#    - TARGET=cs
-    - TARGET=java
+    - TARGET=cs
+#    - TARGET=java
 #    - TARGET=js
     - TARGET=neko
     - TARGET=nodejs

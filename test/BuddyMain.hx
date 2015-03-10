@@ -139,7 +139,7 @@ class AsyncTest extends BuddySuite {
     untyped __js__("process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';");
 #end
 
-/*
+#if !nodejs
         describe("Test RippleTxt requests", {
 
             it("should get ripple.txt from ripple.com", function(done) {
@@ -172,7 +172,7 @@ class AsyncTest extends BuddySuite {
                 }, fail);
             });
         });
-*/
+#else
 
         describe('Ripple Txt', {
           it('should get the content of a ripple.txt file from a given domain', function(done) {
@@ -213,6 +213,8 @@ class AsyncTest extends BuddySuite {
             }, fail);
           });
         });
+
+#end
     }
 }
 
