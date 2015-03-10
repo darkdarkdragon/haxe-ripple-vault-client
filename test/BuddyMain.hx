@@ -78,7 +78,7 @@ class AsyncTest extends BuddySuite {
           contacts: [ ],
           created: '2014-05-20T23:39:52.538Z',
           apps: [ ],
-          lastSeenTxDate: 1401925490000,
+          lastSeenTxDate: #if cpp 0 #else 1401925490000 #end,
           identityVault: { },
           revision: 2199,
           encrypted_secret: 'ACIdSmpv1Ikwhao5kdrcXASz3f9kDg/9oNfqKH6dyUvP0ZNW2Xt/mwYnRwKMUdAhrHLCGI49'
