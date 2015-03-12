@@ -1,6 +1,8 @@
 
 import ripple.vaultclient.RippleTxt;
 import ripple.vaultclient.AuthInfo;
+import ripple.vaultclient.BlobClient;
+import ripple.vaultclient.VaultClient;
 
 
 class ManualTest {
@@ -39,9 +41,27 @@ class ManualTest {
         });
     }
 
+    static function testBlobClient() {
+//        var bobj = BlobClient.get('https://id.ripple.com', );
+
+
+    }
+
+    static function testVaultClient() {
+        var client = new VaultClient();
+        client.login('ivegotnobalances', 'password123', '183ceb28-ebd4-4cf4-9d19-8aee244ea4a9').either(function(loginRes) {
+            trace('logged in');
+            trace(loginRes);
+        }, function(e) {
+            trace(e);
+        });
+    }
+
     public static function main() {
         trace('start');
-        testRippleTxt();
-        testAuthInfo();
+//        testRippleTxt();
+//        testAuthInfo();
+//        testVaultClient();
+        trace('sha512_vm_test: ${ripple.vaultclient.Sha512.sha512_vm_test()}');
     }
 }
