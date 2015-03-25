@@ -1,6 +1,7 @@
 -lib promhx
 -lib nodejs
 -lib buddy
+-lib hxBitcoin
 -cp test
 -cp src
 -js bin/buddytest.js

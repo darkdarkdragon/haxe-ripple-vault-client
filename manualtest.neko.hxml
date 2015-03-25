@@ -2,11 +2,9 @@
 -lib thx.promise
 -lib hxBitcoin
 -lib haxe-ripple-vault-client
--lib nodejs
 -cp src
 -cp test
--js bin/manualtest.js
--D nodejs
+-neko bin/manualtest.n
 -D _z1
 -main ManualTest
 -dce full

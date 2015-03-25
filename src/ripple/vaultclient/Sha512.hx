@@ -64,9 +64,14 @@ class Sha512 {
         return binb2rstr(binb_sha512(rstr2binb(s), s.length * 8));
     }
 
-    private static function rstr_hmac_sha512(key: String, data: String): String {
+    public static function rstr_hmac_sha512(key: String, data: String): String {
         var bkey = rstr2binb(key);
-        if (bkey.length > 32) bkey = binb_sha512(bkey, key.length * 8);
+        return binb_hmac_sha512(bkey, key.length, data);
+    }
+
+    public static function binb_hmac_sha512(bkey: Array<Int32>, l: Int, data: String): String {
+//        if (bkey.length > 32) bkey = binb_sha512(bkey, key.length * 8);
+        if (bkey.length > 32) bkey = binb_sha512(bkey, l * 8);
 
         var ipad = new Array<Int32>();
         var opad = new Array<Int32>();
@@ -79,7 +84,7 @@ class Sha512 {
         return binb2rstr(binb_sha512(opad.concat(hash), 1024 + 512));
     }
 
-    private static function rstr2hex(input: String): String {
+    public static function rstr2hex(input: String): String {
         var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
         var output = "";
         var x;
@@ -116,7 +121,7 @@ class Sha512 {
 //        var dividend = new Array(Math.ceil(input.length / 2));
         var dividend = [];
         var dividendLength = Math.ceil(input.length / 2);
-        for(i in 0...dividendLength) {
+        for (i in 0...dividendLength) {
             dividend.push( (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1) );
         }
 
@@ -196,7 +201,7 @@ class Sha512 {
         return output;
     }
 
-    private static function rstr2binb(input: String): Array<Int32> {
+    public static function rstr2binb(input: String): Array<Int32> {
         var output = [];
         var outputLength = input.length >> 2;
         if (outputLength == 0) outputLength = 1;
@@ -211,7 +216,7 @@ class Sha512 {
         return output;
     }
 
-    private static function binb2rstr(input: Array<Int32>): String {
+    public static function binb2rstr(input: Array<Int32>): String {
         var output = "";
         var i = 0;
         while (i < input.length * 32) {
@@ -223,7 +228,7 @@ class Sha512 {
 
     static var sha512_k: Array<Int64> = null;
 
-    private static function binb_sha512(x: Array<Int32>, len: Int): Array<Int32> {
+    public static function binb_sha512(x: Array<Int32>, len: Int): Array<Int32> {
         if (sha512_k == null) {
             sha512_k = [
                 Int64.make(0x428a2f98, -685199838), Int64.make(0x71374491, 0x23ef65cd),
@@ -331,16 +336,26 @@ class Sha512 {
                 r2 = W[j - 2].revrrot(29);
                 r3 = W[j - 2] >>> 6;
                 s1 = Int64.make(
+                    #if (haxe_ver >= "3.2")
+                    r1.high ^ r2.high ^ r3.high,
+                    r1.low ^ r2.low ^ r3.low
+                    #else
                     haxe.Int64.getHigh(r1) ^ haxe.Int64.getHigh(r2) ^ haxe.Int64.getHigh(r3),
                     haxe.Int64.getLow(r1) ^ haxe.Int64.getLow(r2) ^ haxe.Int64.getLow(r3)
+                    #end
                 );
 
                 r1 = W[j - 15].rrot(1);
                 r2 = W[j - 15].rrot(8);
                 r3 = W[j - 15] >>> 7;
                 s0 = Int64.make(
+                    #if (haxe_ver >= "3.2")
+                    r1.high ^ r2.high ^ r3.high,
+                    r1.low ^ r2.low ^ r3.low
+                    #else
                     haxe.Int64.getHigh(r1) ^ haxe.Int64.getHigh(r2) ^ haxe.Int64.getHigh(r3),
                     haxe.Int64.getLow(r1) ^ haxe.Int64.getLow(r2) ^ haxe.Int64.getLow(r3)
+                    #end
                 );
 
                 W[j]  = s1 + W[j - 7] + s0 + W[j - 16];
@@ -349,8 +364,14 @@ class Sha512 {
 
             for (j in 0...80) {
                 Ch = Int64.make(
+                    #if (haxe_ver >= "3.2")
+                    (e.high & f.high) ^ (~e.high & g.high),
+                    (e.low & f.low) ^ (~e.low & g.low)
+                    #else
                     (haxe.Int64.getHigh(e) & haxe.Int64.getHigh(f)) ^ (~haxe.Int64.getHigh(e) & haxe.Int64.getHigh(g)),
                     (haxe.Int64.getLow(e) & haxe.Int64.getLow(f)) ^ (~haxe.Int64.getLow(e) & haxe.Int64.getLow(g))
+                    #end
+
                 );
 
 
@@ -358,8 +379,13 @@ class Sha512 {
                 r2 = e.rrot(18);
                 r3 = e.revrrot(9);
                 s1 = Int64.make(
+                    #if (haxe_ver >= "3.2")
+                    r1.high ^ r2.high ^ r3.high,
+                    r1.low ^ r2.low ^ r3.low
+                    #else
                     haxe.Int64.getHigh(r1) ^ haxe.Int64.getHigh(r2) ^ haxe.Int64.getHigh(r3),
                     haxe.Int64.getLow(r1) ^ haxe.Int64.getLow(r2) ^ haxe.Int64.getLow(r3)
+                    #end
                 );
 
 
@@ -367,13 +393,23 @@ class Sha512 {
                 r2 = a.revrrot(2);
                 r3 = a.revrrot(7);
                 s0 = Int64.make(
+                    #if (haxe_ver >= "3.2")
+                    r1.high ^ r2.high ^ r3.high,
+                    r1.low ^ r2.low ^ r3.low
+                    #else
                     haxe.Int64.getHigh(r1) ^ haxe.Int64.getHigh(r2) ^ haxe.Int64.getHigh(r3),
                     haxe.Int64.getLow(r1) ^ haxe.Int64.getLow(r2) ^ haxe.Int64.getLow(r3)
+                    #end
                 );
 
                 Maj = Int64.make(
+                    #if (haxe_ver >= "3.2")
+                    (a.high & b.high) ^ (a.high & c.high) ^ (b.high & c.high),
+                    (a.low & b.low) ^ (a.low & c.low) ^ (b.low & c.low)
+                    #else
                     (haxe.Int64.getHigh(a) & haxe.Int64.getHigh(b)) ^ (haxe.Int64.getHigh(a) & haxe.Int64.getHigh(c)) ^ (haxe.Int64.getHigh(b) & haxe.Int64.getHigh(c)),
                     (haxe.Int64.getLow(a) & haxe.Int64.getLow(b)) ^ (haxe.Int64.getLow(a) & haxe.Int64.getLow(c)) ^ (haxe.Int64.getLow(b) & haxe.Int64.getLow(c))
+                    #end
                 );
 
 
@@ -403,8 +439,13 @@ class Sha512 {
 
         var hash: Array<Int32> = [];
         for (i in 0...8) {
+            #if (haxe_ver >= "3.2")
+            hash.push(H[i].high);
+            hash.push(H[i].low);
+            #else
             hash.push(haxe.Int64.getHigh(H[i]));
             hash.push(haxe.Int64.getLow(H[i]));
+            #end
         }
 
         return hash;
@@ -412,8 +453,13 @@ class Sha512 {
 
     static function i642hex(v: Int64): String {
         var y = [];
+        #if (haxe_ver >= "3.2")
+        y.push(v.high);
+        y.push(v.low);
+        #else
         y.push(Int64.getHigh(v));
         y.push(Int64.getLow(v));
+        #end
         return binb2hex(y);
     }
 
@@ -421,8 +467,13 @@ class Sha512 {
         var x = [];
         for (v in d) {
             var y = [];
-            y.push(Int64.getHigh(v));
-            y.push(Int64.getLow(v));
+            #if (haxe_ver >= "3.2")
+            y.push(v.high);
+            y.push(v.low);
+            #else
+            y.push(v.high);
+            y.push(v.low);
+            #end
             x.push(binb2hex(y));
         }
         return x.join(',');

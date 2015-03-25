@@ -1,2 +1,5 @@
 *.sublime-*
 bin
+bittest/
+manualtest.hxml.1
+t1/

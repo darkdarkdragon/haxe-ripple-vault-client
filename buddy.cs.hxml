@@ -2,6 +2,7 @@
 -cp src 
 -lib thx.core
 -lib thx.promise
+-lib hxBitcoin
 -lib utest
 -lib buddy
 -cs bin

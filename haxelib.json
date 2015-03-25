@@ -11,6 +11,7 @@
   "dependencies": {
     "thx.core": "",
     "thx.promise": "",
-    "nodejs": ""
+    "nodejs": "",
+    "hxBitcoin"
   }
 }

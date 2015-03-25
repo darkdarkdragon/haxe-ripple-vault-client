@@ -24,6 +24,10 @@ class RippleTxt {
     private static var cache: Map<String, Dynamic> = new Map();
     private static inline var debug = false;
 
+    #if ripple_test_data
+    static var templ = '[authinfo_url]\r\nhttps://id.ripple.com/v1/authinfo\r\n';
+    #end
+
 
     /**
      * Gets the ripple.txt file for the given domain
@@ -31,10 +35,17 @@ class RippleTxt {
      * @param {function}  fn - Callback function
      */
     public static function get(domain): Promise<Dynamic> {
+        #if ripple_test_data
         if (cache.exists(domain)) {
 //            return Promise.promise(cache.get(domain));
             return Promise.value(cache.get(domain));
+        } else {
+            var parsed = parse(templ);
+            cache.set(domain, parsed);
+            return Promise.value(cache.get(domain));
         }
+        #end
+
 
 //        var dp1 = new Deferred<Dynamic>();
 //        var p1 = new Promise<Dynamic>(dp1);
@@ -59,6 +70,7 @@ class RippleTxt {
                 h.onStatus = function(s) {
                     if (debug) trace('got status $s');
                     status = s;
+                    #if sys
                     if (s == 301) {
                         var location = h.responseHeaders.get('location');
                         if (debug) trace('--- got redirect to $location');
@@ -71,12 +83,13 @@ class RippleTxt {
                         }
                         request(i, location);
                     }
+                    #end
     //                if ( s < 200 || s >= 400 ) {
     //                    // error happens
     //                    h.onData = function(d) { };
     //                }
                 }
-                h.onData = function(d) {
+                h.onData = function(d: String) {
                     if (debug) trace('on data status $status');
                     if (status != 0 && (status < 200 || status >= 400)) {
                         // should not be here
