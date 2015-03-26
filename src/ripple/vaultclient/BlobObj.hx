@@ -11,18 +11,20 @@ import thx.core.Error;
  */
 class BlobObj {
 
-    var deviceId: String;
-    var url: String;
-    var id: String;
-    var key: String;
-    var data: Dynamic;
+    public var deviceId: String;
+    public var url: String;
+    public var id: String;
+    public var key: String;
+    public var data: Dynamic;
 //    this.identity  = new Identity(this);
 
-    var revision: String;
-    var encrypted_secret: String;
-    var identity_id: String;
-    var id_token: String;
-    var missing_fields: Array<String>;
+    public var revision: Int;
+    public var encrypted_secret: String;
+    public var identity_id: String;
+    public var id_token: String;
+    public var missing_fields: Array<String>;
+
+    public var rawData: Dynamic;
 
     private static var debug = true;
 
@@ -132,6 +134,20 @@ class BlobObj {
         if (debug) trace('blobData: $blobData');
         try {
             this.data = Json.parse(Crypt.decrypt(this.key, blobData));
+            if (debug) trace('data:');
+            if (debug) trace(data);
+
+//            this.deviceId = rawData.deviceId;
+//            this.url = rawData.url;
+//            this.id = rawData.id;
+//            this.key = rawData.key;
+//            this.data = rawData.data;
+//            this.revision = rawData.revision;
+//            this.encrypted_secret = rawData.encrypted_secret;
+//            this.identity_id = rawData.identity_id;
+//            this.id_token = rawData.id_token;
+//            this.missing_fields = rawData.missing_fields;
+
             return true;
         } catch (e: Dynamic) {
             trace('client: blob: decryption failed $e');

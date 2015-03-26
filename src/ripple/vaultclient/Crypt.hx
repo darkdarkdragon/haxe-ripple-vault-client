@@ -137,7 +137,7 @@ class Crypt {
         }
 
 
-        var iRandom;
+        var iRandom = null;
 
         while (true) {
             iRandom = random(iModulus);

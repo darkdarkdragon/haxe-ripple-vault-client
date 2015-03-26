@@ -46,6 +46,26 @@ class VaultClient {
 
 
     /**
+     * Retreive and decrypt blob using a blob url, id and crypt derived previously.
+     *
+     * @param url - Blob vault url
+     * @param id  - Blob id from previously retreived blob
+     * @param key - Blob decryption key
+     */
+    public function relogin(url: String, id: String, key: String, deviceId: String): Promise<BlobObj> {
+        // use the url from previously retrieved authInfo, if necessary
+//        if (!url && this.infos[id]) {
+//            url = this.infos[id].blobvault;
+//        }
+
+        if (url == null || url == '') {
+            return Promise.error(new Error('Blob vault URL is required'));
+        }
+
+        return BlobClient.get(url, id, key, deviceId);
+    }
+
+/**
      * Authenticate and retrieve a decrypted blob using a ripple name and password
      *
      * @param username
